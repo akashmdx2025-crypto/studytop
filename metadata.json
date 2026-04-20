@@ -1,0 +1,6 @@
+{
+  "name": "StudyForge AI",
+  "description": "An AI-powered study companion that transforms uploaded study materials into interactive learning experiences with RAG-powered chat, quizzes, and flashcards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
