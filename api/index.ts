@@ -1,14 +1,12 @@
-// source_handbook: week11-hackathon-preparation
 import express from 'express';
-import { createServer as createViteServer } from 'vite';
 import path from 'path';
+// Using standard pdf-parse import as a fallback if PDFParse class fails
 import pdf from 'pdf-parse';
 
-import { chunkText } from './src/lib/chunker';
-import { logAICall, getLogs } from './src/lib/logger';
-import { DocumentStats } from './src/lib/types';
+import { chunkText } from '../src/lib/chunker';
+import { logAICall, getLogs } from '../src/lib/logger';
+import { DocumentStats } from '../src/lib/types';
 
-const PORT = 3000;
 const app = express();
 
 app.use(express.json({ limit: '20mb' }));
@@ -38,6 +36,7 @@ app.post('/api/upload', async (req, res) => {
 
     if (fileType === 'application/pdf') {
       const buffer = Buffer.from(content, 'base64');
+      // Standard pdf-parse usage: pdf(buffer)
       const pdfData = await pdf(buffer);
       text = pdfData.text;
     } else {
@@ -62,30 +61,7 @@ app.post('/api/upload', async (req, res) => {
   }
 });
 
-async function startServer() {
-  // Vite middleware setup
-  if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
-  }
-
-  // Only listen if NOT on Vercel
-  if (!process.env.VERCEL) {
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`Server running on http://localhost:${PORT}`);
-    });
-  }
-}
-
-startServer();
+// For Vercel, we don't need the static file serving here if we use rewrites properly.
+// The frontend will be served as a static site.
 
 export default app;
