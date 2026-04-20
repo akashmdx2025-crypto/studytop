@@ -8,7 +8,7 @@ import { chunkText } from './src/lib/chunker';
 import { logAICall, getLogs } from './src/lib/logger';
 import { DocumentStats } from './src/lib/types';
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 const app = express();
 
 app.use(express.json({ limit: '20mb' }));
